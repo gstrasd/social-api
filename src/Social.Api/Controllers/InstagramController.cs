@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Social.Domain;
@@ -19,10 +20,25 @@ namespace Social.Api.Controllers
             _logger = logger;
         }
 
-        [HttpGet("oembed")]
-        public Task<string> GetOEmbedAsync(Uri postUrl)
+        [HttpGet("oembed/{url}")]
+        public async Task<IActionResult> GetOEmbedAsync(string url)
         {
-            return _service.GetPostHtmlAsync(postUrl);
+            var decodedUrl = HttpUtility.UrlDecode(url);
+            if (!Uri.TryCreate(decodedUrl, UriKind.Absolute, out var postUrl))
+            {
+                return BadRequest(new { });
+            }
+
+            try
+            {
+                var html = await _service.GetPostHtmlAsync(postUrl!).ConfigureAwait(false);
+                return Ok(new { html });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return StatusCode(500);
+            }
         }
     }
 }
