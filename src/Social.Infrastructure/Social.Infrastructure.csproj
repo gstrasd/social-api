@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\libraries\src\Library.Messages\Library.Messages.csproj" />
     <ProjectReference Include="..\Social.Domain\Social.Domain.csproj" />
   </ItemGroup>
 

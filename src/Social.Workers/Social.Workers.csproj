@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\libraries\src\Library.Amazon\Library.Amazon.csproj" />
+    <ProjectReference Include="..\..\..\libraries\src\Library.Installation\Library.Installation.csproj" />
+    <ProjectReference Include="..\..\..\libraries\src\Library.Messages\Library.Messages.csproj" />
+    <ProjectReference Include="..\..\..\libraries\src\Library.Platform\Library.Platform.csproj" />
+    <ProjectReference Include="..\..\..\libraries\src\Library\Library.csproj" />
+    <ProjectReference Include="..\Social.Domain\Social.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Library.Hosting">
+      <HintPath>..\..\..\libraries\src\Library.Hosting\bin\Debug\net5.0\Library.Hosting.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
