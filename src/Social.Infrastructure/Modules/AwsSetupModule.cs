@@ -7,7 +7,7 @@ using Autofac;
 using Library.Installation;
 using Microsoft.Extensions.Configuration;
 
-namespace Social.Workers.Modules
+namespace Social.Infrastructure.Modules
 {
     public class AwsSetupModule : Module
     {

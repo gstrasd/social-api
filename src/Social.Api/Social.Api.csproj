@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\libraries\src\Library.Autofac\Library.Autofac.csproj" />
     <ProjectReference Include="..\..\..\libraries\src\Library.Hosting.AspNetCore\Library.Hosting.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\libraries\src\Library.Hosting\Library.Hosting.csproj" />
     <ProjectReference Include="..\..\..\libraries\src\Library.Installation\Library.Installation.csproj" />
     <ProjectReference Include="..\..\..\libraries\src\Library.Messages\Library.Messages.csproj" />
     <ProjectReference Include="..\..\..\libraries\src\Library.Serilog\Library.Serilog.csproj" />

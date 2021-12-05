@@ -8,13 +8,15 @@ using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.SQS;
 using Autofac;
+using Autofac.Core;
+using Library.Autofac;
 using Library.Amazon;
 using Library.Dataflow;
 using Library.Messages;
 using Library.Platform.Queuing;
 using Microsoft.Extensions.Configuration;
 
-namespace Social.Workers.Modules
+namespace Social.Infrastructure.Modules
 {
     public class AwsModule : Module
     {
@@ -27,7 +29,7 @@ namespace Social.Workers.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register(c =>
+            builder.Register(_ =>
                 {
                     var accessKey = _configuration["Aws:AccessKey"];
                     var secretKey = _configuration["Aws:SecretKey"];
@@ -38,26 +40,21 @@ namespace Social.Workers.Modules
                 .Named<AWSOptions>("Development")
                 .SingleInstance();
 
-            builder.Register(c =>
+            builder.Register((c, p) =>
                 {
-                    var options = c.ResolveNamed<AWSOptions>(_configuration["EnvironmentName"]);
+                    var queue = p.TryGetValue("queue", out var value) ? value as string : null;
+                    if (queue == null) throw new ArgumentNullException("queue", "To resolve an SQS queue client, the queue name must be supplied as a named parameter with the name \"queue\"..");
+
+                    var options = c.ResolveNamed<AWSOptions>(_configuration["EnvironmentName"] ?? _configuration["ASPNETCORE_ENVIRONMENT"]);
                     var client = options.CreateServiceClient<IAmazonSQS>();
-                    return client;
-                })
-                .As<IAmazonSQS>()
-                .InstancePerDependency();
+                    var configuration = _configuration.GetSqsQueueClientConfiguration($"Aws:Queues:{queue}");
+                    var queueClient = new SqsQueueClient(client, configuration);
 
-            builder.Register(c =>
-                {
-                    var configuration = _configuration.GetSqsQueueClientConfiguration("Aws:Queues:ProcessInstagramAccountMessage");
-                    var client = new SqsQueueClient(c.Resolve<IAmazonSQS>(), configuration);
-                    var buffer = c.Resolve<ITargetBlock<ProcessInstagramAccountMessage>>();
-                    var producer = new QueueMessageProducer<ProcessInstagramAccountMessage>(client, buffer);
-
-                    return producer;
+                    return queueClient;
                 })
+                .OnlyIf(_ => _configuration["Providers:Queueing"].Equals("aws", StringComparison.InvariantCultureIgnoreCase))
                 .InstancePerDependency()
-                .As<MessageProducer<ProcessInstagramAccountMessage>>();
+                .As<IQueueClient>();
         }
     }
 }

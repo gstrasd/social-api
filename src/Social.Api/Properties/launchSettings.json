@@ -3,7 +3,6 @@
   "profiles": {
     "Social.Api": {
       "commandName": "Project",
-      "commandLineArgs": "setup",
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {

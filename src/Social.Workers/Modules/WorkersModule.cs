@@ -1,19 +1,20 @@
 ﻿using System;
+using Autofac;
 using System.Collections.Generic;
+using Library.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
-using Amazon.SQS;
-using Autofac;
-using Library.Amazon;
-using Library.Configuration;
 using Library.Dataflow;
 using Library.Hosting;
 using Library.Messages;
+using Library.Messages.Social;
 using Library.Platform.Queuing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Module = Autofac.Module;
 
 namespace Social.Workers.Modules
 {
@@ -28,15 +29,21 @@ namespace Social.Workers.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            //builder.Register(c => new MessageWorker<ProcessInstagramAccountMessage>(
-            //    c.Resolve<MessageProducer<ProcessInstagramAccountMessage>>(),
-            //    c.Resolve<MessageConsumer<ProcessInstagramAccountMessage>>(),
-            //    _configuration.Bind<MessageWorkerConfiguration>("Workers:ProcessInstagramAccount"))
-            //    {
-            //        Name = "Instagram Account Processor"
-            //    })
-            //    .SingleInstance()
-            //    .As<IHostedService>();
+            builder.RegisterGenericQueueMessageWorkerFactory();
+
+            builder.Register(c => c.Resolve<QueueMessageWorker<ProcessInstagramAccountMessage>>(
+                new NamedParameter("queue", "process-instagram-account"),
+                new NamedParameter("name", "Instagram Account Processor")))
+                .SingleInstance()
+                .As<IHostedService>();
+
+            builder.Register(c =>
+                {
+                    var buffer = c.Resolve<ISourceBlock<ProcessInstagramAccountMessage>>();
+                    return new ProcessInstagramAccountMessageConsumer(buffer);
+                })
+                .SingleInstance()
+                .As<MessageConsumer<ProcessInstagramAccountMessage>>();
         }
     }
 }

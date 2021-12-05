@@ -15,7 +15,7 @@ using Library.Hosting;
 using Serilog;
 using Social.Api.Modules;
 using Library.Installation;
-using Social.Workers.Modules;
+using Social.Infrastructure.Modules;
 
 namespace Social.Api
 {
@@ -26,6 +26,8 @@ namespace Social.Api
             var command = new HostCommand(CreateHostBuilder(args));
             command.AddCommand(new InstallerCommand(CreateInstallerBuilder()));
             command.Invoke(args);
+
+            Console.ReadKey();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)

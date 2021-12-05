@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Library.Hosting;
 using Library.Serilog;
 using Social.Api.Modules;
 using Social.Application.Modules;
