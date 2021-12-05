@@ -19,7 +19,6 @@ namespace Social.Workers
 
         protected override Task ConsumeMessageAsync(ProcessInstagramAccountMessage message, CancellationToken token = default)
         {
-            throw new NotImplementedException();
         }
     }
 }

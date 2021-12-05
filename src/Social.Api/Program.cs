@@ -47,6 +47,7 @@ namespace Social.Api
         {
             var builder = Installer
                 .CreateDefaultBuilder()
+                .UseAppSettings()
                 .ConfigureContainer((context, container) =>
                 {
                     container.RegisterModule(new AwsSetupModule(context.Configuration));

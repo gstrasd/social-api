@@ -33,6 +33,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Installation", "..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Social.Api", "Social.Api\Social.Api.csproj", "{ADDD6A52-EC2B-454F-A1E9-577490965934}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "messages", "messages", "{2D521339-F994-4FEC-8C40-438F45292F36}"
+	ProjectSection(SolutionItems) = preProject
+		messages\process-instagram-account.json = messages\process-instagram-account.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
