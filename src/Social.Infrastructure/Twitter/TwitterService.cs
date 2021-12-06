@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Library.Net;
@@ -15,6 +16,7 @@ namespace Social.Infrastructure.Twitter
 {
     internal class TwitterService : ITwitterService
     {
+        private static readonly Regex _usernameValidationExpression = new("^[A-Za-z0-9_]{1,15}$", RegexOptions.Compiled);
         private readonly HttpClient _client;
         private readonly TwitterConfiguration _configuration;
         private readonly ILogger _logger;
@@ -28,11 +30,36 @@ namespace Social.Infrastructure.Twitter
 
         public async Task<TwitterUser?> GetUserByUsernameAsync(string username, CancellationToken token = default)
         {
+            if (!_usernameValidationExpression.IsMatch(username))
+            {
+                throw new ArgumentException($"Cannot get user from Twitter V2 API. Parameter value: \"{username}\" must match expression \"{_usernameValidationExpression}\"", nameof(username));
+            }
+
+            var url = $"{_configuration.BaseUrl}/users/by/username/{username}?user.fields=created_at,description,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified";
+            var data = await GetDataAsync<UserByUsernameData>(url, token);
+
+            if (data == null) return null;
+            
+            var user = new TwitterUser
+            {
+                TwitterId = data.Id,
+                Name = data.Name,
+                Username = data.Username,
+                Created = data.Created,
+                Description = data.Description,
+                ProfileUrl = data.Url,
+                ProfileImageUrl = data.ProfileImageUrl
+            };
+
+            return user;
+        }
+
+        private async Task<TData?> GetDataAsync<TData>(string url, CancellationToken token = default)
+        {
             // Create token that will be cancellable either by the configured timeout or invoking code
             var timeout = new CancellationTokenSource(_configuration.RequestTimeout).Token;
             var requestToken = CancellationTokenSource.CreateLinkedTokenSource(timeout, token).Token;
 
-            var url = $"{_configuration.BaseUrl}/users/by/username/{username}?user.fields=created_at,description,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified";
             var request = new HttpRequestMessage(HttpMethod.Get, url)
             {
                 Headers =
@@ -47,25 +74,11 @@ namespace Social.Infrastructure.Twitter
 
             if (response.StatusCode.IsSuccess())
             {
-                TwitterV2Response<UserByUsernameData>? twitterResponse;
+                TwitterV2Response<TData>? twitterResponse;
                 try
                 {
-                    twitterResponse = JsonSerializer.Deserialize<TwitterV2Response<UserByUsernameData>>(content)!;
-                    if (twitterResponse.Data != null)
-                    {
-                        var user = new TwitterUser
-                        {
-                            TwitterId = twitterResponse.Data.Id,
-                            Name = twitterResponse.Data.Name,
-                            Username = twitterResponse.Data.Username,
-                            //Created = twitterResponse.Data.Created,
-                            Description = twitterResponse.Data.Description,
-                            //ProfileUrl = twitterResponse.Data.Url,
-                            //ProfileImageUrl = twitterResponse.Data.ProfileImageUrl
-                        };
-
-                        return user;
-                    }
+                    twitterResponse = JsonSerializer.Deserialize<TwitterV2Response<TData>>(content)!;
+                    if (twitterResponse.Data != null) return twitterResponse.Data;
                 }
                 catch (Exception e)
                 {
@@ -76,7 +89,7 @@ namespace Social.Infrastructure.Twitter
                 {
                     _logger.Error("");      // TODO: Log error data
                 }
-                return null;
+                return default;
             }
 
             ErrorResponse? error;
@@ -90,7 +103,7 @@ namespace Social.Infrastructure.Twitter
             }
 
             if (error != null) throw new TwitterErrorException(error!, response.StatusCode);
-            
+
             throw new HttpRequestException(String.Concat("Response status code does not indicate success: ", new HttpStatusCodeFormatter().Format("G", response.StatusCode, default)));
         }
     }

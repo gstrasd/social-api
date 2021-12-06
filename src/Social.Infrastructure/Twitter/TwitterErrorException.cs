@@ -15,7 +15,7 @@ namespace Social.Infrastructure.Twitter
             ErrorType = error?.Type;
             Errors = error == null
                 ? new List<string>()
-                : error.Errors.Where(e => String.IsNullOrWhiteSpace(e.Message)).Select(e => e.Message!).ToList();
+                : error.Errors.Where(e => !String.IsNullOrWhiteSpace(e.Message)).Select(e => e.Message!).ToList();
             StatusCode = statusCode;
         }
 
