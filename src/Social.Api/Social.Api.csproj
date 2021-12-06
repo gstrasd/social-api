@@ -17,7 +17,6 @@
     <ProjectReference Include="..\..\..\libraries\src\Library.Hosting.AspNetCore\Library.Hosting.AspNetCore.csproj" />
     <ProjectReference Include="..\..\..\libraries\src\Library.Hosting\Library.Hosting.csproj" />
     <ProjectReference Include="..\..\..\libraries\src\Library.Installation\Library.Installation.csproj" />
-    <ProjectReference Include="..\..\..\libraries\src\Library.Messages\Library.Messages.csproj" />
     <ProjectReference Include="..\..\..\libraries\src\Library.Serilog\Library.Serilog.csproj" />
     <ProjectReference Include="..\..\..\libraries\src\Library\Library.csproj" />
     <ProjectReference Include="..\Social.Application\Social.Application.csproj" />
