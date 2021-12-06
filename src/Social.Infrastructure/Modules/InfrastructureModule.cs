@@ -9,7 +9,9 @@ using Library.Configuration;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Social.Domain;
+using Social.Domain.Twitter;
 using Social.Infrastructure.Iframely;
+using Social.Infrastructure.Twitter;
 
 namespace Social.Infrastructure.Modules
 {
@@ -24,6 +26,7 @@ namespace Social.Infrastructure.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
+            /* IFramely */
             builder.Register(_ => new HttpClient())
                 .SingleInstance()
                 .Named<HttpClient>("iframely");
@@ -35,6 +38,24 @@ namespace Social.Infrastructure.Modules
             builder.Register(c => new IframelyService(c.ResolveNamed<HttpClient>("iframely"), c.Resolve<IframelyConfiguration>(), c.Resolve<ILogger>()))
                 .SingleInstance()
                 .As<IOEmbedService>();
+
+            /* Instagram */
+            builder.Register(_ => new HttpClient())
+                .SingleInstance()
+                .Named<HttpClient>("instagram");
+
+            /* Twitter */
+            builder.Register(_ => new HttpClient())
+                .SingleInstance()
+                .Named<HttpClient>("twitter");
+
+            builder.Register(c =>
+                {
+                    var configuration = _configuration.Bind<TwitterConfiguration>("Twitter");
+                    return new TwitterService(c.ResolveNamed<HttpClient>("twitter"), configuration, c.Resolve<ILogger>());
+                })
+                .SingleInstance()
+                .As<ITwitterService>();
         }
     }
 }

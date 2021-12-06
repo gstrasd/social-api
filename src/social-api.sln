@@ -35,7 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Social.Api", "Social.Api\So
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "messages", "messages", "{2D521339-F994-4FEC-8C40-438F45292F36}"
 	ProjectSection(SolutionItems) = preProject
-		messages\process-instagram-account.json = messages\process-instagram-account.json
+		messages\discover-instagram-account.json = messages\discover-instagram-account.json
+		messages\discover-twitter-account.json = messages\discover-twitter-account.json
 	EndProjectSection
 EndProject
 Global

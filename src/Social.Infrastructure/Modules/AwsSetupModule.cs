@@ -23,19 +23,39 @@ namespace Social.Infrastructure.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            // Create process-instagram-account queue
+            // Create discover-instagram-account queue
             builder.Register(c =>
                 {
                     var manager = c.Resolve<IQueueManager>();
-                    var step = new InstallerStep("Create process-instagram-account queue", async () =>
+                    var step = new InstallerStep("Create discover-instagram-account queue", async () =>
                     {
-                        var exists = await manager.QueueExistsAsync("process-instagram-account");
+                        var exists = await manager.QueueExistsAsync("discover-instagram-account");
                         if (exists)
                         {
                             Console.WriteLine("Queue already exists.");
                             return;
                         }
-                        var queueUrl = await manager.CreateQueueAsync("process-instagram-account");
+                        var queueUrl = await manager.CreateQueueAsync("discover-instagram-account");
+                        Console.WriteLine($"Queue created with URL {queueUrl}.");
+                    });
+                    return step;
+                })
+                .SingleInstance()
+                .As<IInstallerStep>();
+
+            // Create discover-twitter-account queue
+            builder.Register(c =>
+                {
+                    var manager = c.Resolve<IQueueManager>();
+                    var step = new InstallerStep("Create discover-twitter-account queue", async () =>
+                    {
+                        var exists = await manager.QueueExistsAsync("discover-twitter-account");
+                        if (exists)
+                        {
+                            Console.WriteLine("Queue already exists.");
+                            return;
+                        }
+                        var queueUrl = await manager.CreateQueueAsync("discover-twitter-account");
                         Console.WriteLine($"Queue created with URL {queueUrl}.");
                     });
                     return step;

@@ -14,6 +14,8 @@ using Library.Messages.Social;
 using Library.Platform.Queuing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using Social.Domain.Twitter;
 using Module = Autofac.Module;
 
 namespace Social.Workers.Modules
@@ -31,19 +33,33 @@ namespace Social.Workers.Modules
         {
             builder.RegisterGenericQueueMessageWorkerFactory();
 
-            builder.Register(c => c.Resolve<QueueMessageWorker<ProcessInstagramAccountMessage>>(
-                new NamedParameter("queue", "process-instagram-account"),
+            builder.Register(c => c.Resolve<QueueMessageWorker<DiscoverInstagramAccountMessage>>(
+                new NamedParameter("queue", "discover-instagram-account"),
                 new NamedParameter("name", "Instagram Account Processor")))
+                .SingleInstance()
+                .As<IHostedService>();
+
+            builder.Register(c => c.Resolve<QueueMessageWorker<DiscoverTwitterAccountMessage>>(
+                    new NamedParameter("queue", "discover-twitter-account"),
+                    new NamedParameter("name", "Twitter Account Processor")))
                 .SingleInstance()
                 .As<IHostedService>();
 
             builder.Register(c =>
                 {
-                    var buffer = c.Resolve<ISourceBlock<ProcessInstagramAccountMessage>>();
-                    return new ProcessInstagramAccountMessageConsumer(buffer);
+                    var buffer = c.Resolve<ISourceBlock<DiscoverInstagramAccountMessage>>();
+                    return new DiscoverInstagramAccountMessageConsumer(buffer);
                 })
                 .SingleInstance()
-                .As<MessageConsumer<ProcessInstagramAccountMessage>>();
+                .As<MessageConsumer<DiscoverInstagramAccountMessage>>();
+
+            builder.Register(c =>
+                {
+                    var buffer = c.Resolve<ISourceBlock<DiscoverTwitterAccountMessage>>();
+                    return new DiscoverTwitterAccountMessageConsumer(c.Resolve<ITwitterService>(), buffer, c.Resolve<ILogger>());
+                })
+                .SingleInstance()
+                .As<MessageConsumer<DiscoverTwitterAccountMessage>>();
         }
     }
 }
