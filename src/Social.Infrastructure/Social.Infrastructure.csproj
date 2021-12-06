@@ -12,8 +12,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\libraries\src\Library.Amazon\Library.Amazon.csproj" />
     <ProjectReference Include="..\..\..\libraries\src\Library.Installation\Library.Installation.csproj" />
-    <ProjectReference Include="..\..\..\libraries\src\Library.Messages\Library.Messages.csproj" />
     <ProjectReference Include="..\Social.Domain\Social.Domain.csproj" />
+    <ProjectReference Include="..\Social.Messages\Social.Messages.csproj" />
   </ItemGroup>
 
 </Project>

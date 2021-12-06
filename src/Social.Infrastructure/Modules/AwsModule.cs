@@ -12,7 +12,6 @@ using Autofac.Core;
 using Library.Autofac;
 using Library.Amazon;
 using Library.Dataflow;
-using Library.Messages;
 using Library.Platform.Queuing;
 using Microsoft.Extensions.Configuration;
 

@@ -9,13 +9,12 @@ using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Library.Dataflow;
 using Library.Hosting;
-using Library.Messages;
-using Library.Messages.Social;
 using Library.Platform.Queuing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Social.Domain.Twitter;
+using Social.Messages;
 using Module = Autofac.Module;
 
 namespace Social.Workers.Modules

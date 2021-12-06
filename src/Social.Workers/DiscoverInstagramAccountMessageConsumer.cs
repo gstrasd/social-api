@@ -6,8 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Library.Dataflow;
-using Library.Messages;
-using Library.Messages.Social;
+using Social.Messages;
 
 namespace Social.Workers
 {

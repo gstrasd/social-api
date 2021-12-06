@@ -7,9 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Library.Dataflow;
-using Library.Messages.Social;
 using Serilog;
 using Social.Domain.Twitter;
+using Social.Messages;
 
 namespace Social.Workers
 {
@@ -27,9 +27,20 @@ namespace Social.Workers
 
         protected override async Task ConsumeMessageAsync(DiscoverTwitterAccountMessage message, CancellationToken token = default)
         {
-            var user = await _service.GetUserByUsernameAsync(message.TwitterUsername, token);
+            try
+            {
+                var user = await _service.GetUserByUsernameAsync(message.TwitterUsername, token);
+                Console.WriteLine(JsonSerializer.Serialize(user));
 
-            Console.WriteLine(JsonSerializer.Serialize(user));
+                if (user == null) return;
+
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                //throw;
+            }
         }
     }
 }

@@ -8,10 +8,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\libraries\src\Library.Amazon\Library.Amazon.csproj" />
     <ProjectReference Include="..\..\..\libraries\src\Library.Installation\Library.Installation.csproj" />
-    <ProjectReference Include="..\..\..\libraries\src\Library.Messages\Library.Messages.csproj" />
     <ProjectReference Include="..\..\..\libraries\src\Library.Platform\Library.Platform.csproj" />
     <ProjectReference Include="..\..\..\libraries\src\Library\Library.csproj" />
     <ProjectReference Include="..\Social.Domain\Social.Domain.csproj" />
+    <ProjectReference Include="..\Social.Messages\Social.Messages.csproj" />
   </ItemGroup>
 
   <ItemGroup>
