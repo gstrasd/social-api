@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Social.Domain.Twitter;
 using Social.Messages;
+using Social.Workers.Consumers;
 using Module = Autofac.Module;
 
 namespace Social.Workers.Modules

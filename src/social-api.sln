@@ -38,7 +38,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "messages", "messages", "{2D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Social.Messages", "Social.Messages\Social.Messages.csproj", "{D038954A-B798-47B8-8CF6-02C3B5BC0A30}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Social.Workers_old", "Social.Workers_old\Social.Workers_old.csproj", "{F823D1FE-E471-4F13-8B6F-77277E9871F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Social.Workers", "Social.Workers\Social.Workers.csproj", "{A393CB2D-7FED-4BD2-9597-511772EA5F4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -98,10 +98,10 @@ Global
 		{D038954A-B798-47B8-8CF6-02C3B5BC0A30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D038954A-B798-47B8-8CF6-02C3B5BC0A30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D038954A-B798-47B8-8CF6-02C3B5BC0A30}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F823D1FE-E471-4F13-8B6F-77277E9871F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F823D1FE-E471-4F13-8B6F-77277E9871F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F823D1FE-E471-4F13-8B6F-77277E9871F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F823D1FE-E471-4F13-8B6F-77277E9871F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A393CB2D-7FED-4BD2-9597-511772EA5F4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A393CB2D-7FED-4BD2-9597-511772EA5F4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A393CB2D-7FED-4BD2-9597-511772EA5F4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A393CB2D-7FED-4BD2-9597-511772EA5F4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

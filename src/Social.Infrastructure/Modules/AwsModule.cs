@@ -41,7 +41,7 @@ namespace Social.Infrastructure.Modules
 
             builder.Register(c =>
                 {
-                    var options = c.ResolveNamed<AWSOptions>(_configuration["EnvironmentName"] ?? _configuration["ASPNETCORE_ENVIRONMENT"]);
+                    var options = c.ResolveNamed<AWSOptions>(_configuration["EnvironmentName"] ?? _configuration["ASPNETCORE_ENVIRONMENT"] ?? _configuration["DOTNET_ENVIRONMENT"]);
                     var client = options.CreateServiceClient<IAmazonSQS>();
 
                     return client;

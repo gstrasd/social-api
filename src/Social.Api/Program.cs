@@ -16,6 +16,7 @@ using Serilog;
 using Social.Api.Modules;
 using Library.Installation;
 using Social.Infrastructure.Modules;
+using Social.Application.Modules;
 
 namespace Social.Api
 {
@@ -35,6 +36,13 @@ namespace Social.Api
             var builder = Host
                 .CreateDefaultBuilder(args)
                 .UseAutofac()
+                .ConfigureContainer((HostBuilderContext c, ContainerBuilder cb) =>
+                    {
+                        cb.RegisterModule(new ApiModule(c.Configuration));
+                        cb.RegisterModule(new ApplicationModule(c.Configuration));
+                        cb.RegisterModule(new InfrastructureModule(c.Configuration));
+                        cb.RegisterModule(new AwsModule(c.Configuration));
+                    })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
@@ -43,7 +51,6 @@ namespace Social.Api
             return builder;
         }
 
-        // TODO: Decide if this should be a separate executable
         public static IInstallerBuilder CreateInstallerBuilder()
         {
             var builder = Installer
@@ -53,21 +60,6 @@ namespace Social.Api
                 {
                     container.RegisterModule(new AwsSetupModule(context.Configuration));
                     container.RegisterModule(new AwsModule(context.Configuration));
-                });
-
-            return builder;
-        }
-
-        // TODO: Decide how to create just a worker executable. Either by using a WorkerCommand, or by making the Social.Workers project an executable
-        public static IHostBuilder CreateWorkerBuilder(string[] args)
-        {
-            var builder = Host
-                .CreateDefaultBuilder(args)
-                .UseAutofac()
-                .ConfigureContainer((HostBuilderContext c, ContainerBuilder cb) =>
-                {
-                    cb.RegisterModule(new AwsSetupModule(c.Configuration));
-                    cb.RegisterModule(new AwsModule(c.Configuration));
                 });
 
             return builder;

@@ -10,7 +10,7 @@ using Library.Dataflow;
 using Serilog;
 using Social.Messages;
 
-namespace Social.Workers
+namespace Social.Workers.Consumers
 {
     internal class DiscoverInstagramAccountMessageConsumer : MessageConsumer<DiscoverInstagramAccountMessage>
     {

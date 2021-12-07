@@ -19,7 +19,6 @@ using Library.Serilog;
 using Social.Api.Modules;
 using Social.Application.Modules;
 using Social.Infrastructure.Modules;
-using Social.Workers.Modules;
 
 namespace Social.Api
 {
@@ -63,16 +62,6 @@ namespace Social.Api
             {
                 endpoints.MapControllers();
             });
-        }
-
-        public void ConfigureContainer(ContainerBuilder builder)
-        {
-            builder.RegisterMessageWorkers(_configuration.Bind<List<MessageWorkerConfiguration>>("MessageWorkers"));
-            builder.RegisterModule(new ApiModule(_configuration));
-            builder.RegisterModule(new ApplicationModule(_configuration));
-            builder.RegisterModule(new InfrastructureModule(_configuration));
-            builder.RegisterModule(new WorkersModule(_configuration));
-            builder.RegisterModule(new AwsModule(_configuration));
         }
     }
 }

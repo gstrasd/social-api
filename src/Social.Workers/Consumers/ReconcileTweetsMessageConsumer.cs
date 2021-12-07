@@ -11,7 +11,7 @@ using Serilog;
 using Social.Domain.Twitter;
 using Social.Messages;
 
-namespace Social.Workers
+namespace Social.Workers.Consumers
 {
     internal class ReconcileTweetsMessageConsumer : MessageConsumer<ReconcileTweetsMessage>
     {
