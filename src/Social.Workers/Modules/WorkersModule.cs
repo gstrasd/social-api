@@ -31,6 +31,13 @@ namespace Social.Workers.Modules
         protected override void Load(ContainerBuilder builder)
         {
             /* Instagram Account Processor */
+            builder.Register(c => new QueueMessageProducer<DiscoverInstagramAccountMessage>(
+                    c.Resolve<IQueueClient>(new NamedParameter("queue", "discover-instagram-account")),
+                    c.Resolve<ITargetBlock<DiscoverInstagramAccountMessage>>()
+                ))
+                .SingleInstance()
+                .As<MessageProducer<DiscoverInstagramAccountMessage>>();
+
             builder.Register(c => new DiscoverInstagramAccountMessageConsumer(
                     c.Resolve<ISourceBlock<DiscoverInstagramAccountMessage>>(), 
                     c.Resolve<ILogger>()))
@@ -38,14 +45,29 @@ namespace Social.Workers.Modules
                 .As<MessageConsumer<DiscoverInstagramAccountMessage>>();
 
             /* Twitter Account Processor */
+            builder.Register(c => new QueueMessageProducer<DiscoverTwitterAccountMessage>(
+                    c.Resolve<IQueueClient>(new NamedParameter("queue", "discover-twitter-account")),
+                    c.Resolve<ITargetBlock<DiscoverTwitterAccountMessage>>()
+                ))
+                .SingleInstance()
+                .As<MessageProducer<DiscoverTwitterAccountMessage>>();
+
             builder.Register(c => new DiscoverTwitterAccountMessageConsumer(
                     c.Resolve<ITwitterService>(), 
+                    c.Resolve<IQueueClient>(new NamedParameter("queue", "reconcile-tweets")),
                     c.Resolve<ISourceBlock<DiscoverTwitterAccountMessage>>(), 
                     c.Resolve<ILogger>()))
                 .SingleInstance()
                 .As<MessageConsumer<DiscoverTwitterAccountMessage>>();
 
             /* Twitter Tweet Processor */
+            builder.Register(c => new QueueMessageProducer<ReconcileTweetsMessage>(
+                    c.Resolve<IQueueClient>(new NamedParameter("queue", "reconcile-tweets")),
+                    c.Resolve<ITargetBlock<ReconcileTweetsMessage>>()
+                ))
+                .SingleInstance()
+                .As<MessageProducer<ReconcileTweetsMessage>>();
+
             builder.Register(c => new ReconcileTweetsMessageConsumer(
                     c.Resolve<ITwitterService>(), 
                     c.Resolve<ISourceBlock<ReconcileTweetsMessage>>(), 

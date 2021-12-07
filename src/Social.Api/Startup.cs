@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Library.Configuration;
 using Library.Hosting;
 using Library.Serilog;
 using Social.Api.Modules;
@@ -66,7 +67,7 @@ namespace Social.Api
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterQueueMessageWorkers(_configuration);
+            builder.RegisterMessageWorkers(_configuration.Bind<List<MessageWorkerConfiguration>>("MessageWorkers"));
             builder.RegisterModule(new ApiModule(_configuration));
             builder.RegisterModule(new ApplicationModule(_configuration));
             builder.RegisterModule(new InfrastructureModule(_configuration));
