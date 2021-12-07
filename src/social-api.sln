@@ -19,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Hosting.AspNetCore"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Serilog", "..\..\libraries\src\Library.Serilog\Library.Serilog.csproj", "{B6C95D6C-A09D-457C-A088-EB050A55CB89}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Social.Workers", "Social.Workers\Social.Workers.csproj", "{F9DA3029-2D24-427B-9125-0BB56E9E660A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Amazon", "..\..\libraries\src\Library.Amazon\Library.Amazon.csproj", "{11237F92-37A2-42A6-8BB1-DCC7D8CBFFBC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Platform", "..\..\libraries\src\Library.Platform\Library.Platform.csproj", "{C94453CA-6B37-4573-8728-D380F666DA4C}"
@@ -39,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "messages", "messages", "{2D
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Social.Messages", "Social.Messages\Social.Messages.csproj", "{D038954A-B798-47B8-8CF6-02C3B5BC0A30}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Social.Workers_old", "Social.Workers_old\Social.Workers_old.csproj", "{F823D1FE-E471-4F13-8B6F-77277E9871F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,10 +74,6 @@ Global
 		{B6C95D6C-A09D-457C-A088-EB050A55CB89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6C95D6C-A09D-457C-A088-EB050A55CB89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6C95D6C-A09D-457C-A088-EB050A55CB89}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F9DA3029-2D24-427B-9125-0BB56E9E660A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F9DA3029-2D24-427B-9125-0BB56E9E660A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F9DA3029-2D24-427B-9125-0BB56E9E660A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F9DA3029-2D24-427B-9125-0BB56E9E660A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{11237F92-37A2-42A6-8BB1-DCC7D8CBFFBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{11237F92-37A2-42A6-8BB1-DCC7D8CBFFBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11237F92-37A2-42A6-8BB1-DCC7D8CBFFBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -102,6 +98,10 @@ Global
 		{D038954A-B798-47B8-8CF6-02C3B5BC0A30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D038954A-B798-47B8-8CF6-02C3B5BC0A30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D038954A-B798-47B8-8CF6-02C3B5BC0A30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F823D1FE-E471-4F13-8B6F-77277E9871F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F823D1FE-E471-4F13-8B6F-77277E9871F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F823D1FE-E471-4F13-8B6F-77277E9871F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F823D1FE-E471-4F13-8B6F-77277E9871F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
