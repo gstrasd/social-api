@@ -10,5 +10,6 @@ namespace Social.Domain.Twitter
     public interface ITwitterService
     {
         Task<TwitterUser?> GetUserByUsernameAsync(string username, CancellationToken token = default);
+        Task<IEnumerable<Tweet>?> GetTweetsByUserId(string id, DateTime? startDate = default, DateTime? endDate = default, int maxCount = 50, CancellationToken token = default);
     }
 }

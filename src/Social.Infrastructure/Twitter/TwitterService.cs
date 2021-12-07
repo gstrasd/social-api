@@ -42,7 +42,7 @@ namespace Social.Infrastructure.Twitter
             
             var user = new TwitterUser
             {
-                TwitterId = data.Id,
+                UserId = data.Id,
                 Name = data.Name,
                 Username = data.Username,
                 Created = data.Created,
@@ -52,6 +52,29 @@ namespace Social.Infrastructure.Twitter
             };
 
             return user;
+        }
+
+        public async Task<IEnumerable<Tweet>?> GetTweetsByUserId(string id, DateTime? startDate = default, DateTime? endDate = default, int maxCount = 50, CancellationToken token = default)      // TODO: Make this IAsyncEnumerable
+        {
+            if (maxCount < 1) throw new ArgumentOutOfRangeException(nameof(maxCount), maxCount, "At least one tweet must be requested.");
+            if (maxCount > 100) throw new ArgumentOutOfRangeException(nameof(maxCount), maxCount, "The maximum number of tweets that can be retrieved in a single request is 100.");
+
+            var url = new StringBuilder($"{_configuration.BaseUrl}/users/{id}/tweets?");
+            if (startDate != default) url.Append($"start_time={startDate:O}&");
+            if (endDate != default) url.Append($"end_time={endDate:O}&");
+            url.Append("tweet.fields=id,text&");
+            url.Append($"max_results={maxCount}");
+
+            var data = await GetDataAsync<List<TweetData>>(url.ToString(), token);
+            var tweets =
+                from d in data
+                select new Tweet
+                {
+                    TweetId = d.Id,
+                    Text = d.Text
+                };
+
+            return tweets;
         }
 
         private async Task<TData?> GetDataAsync<TData>(string url, CancellationToken token = default)

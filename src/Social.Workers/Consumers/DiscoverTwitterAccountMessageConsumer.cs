@@ -28,31 +28,31 @@ namespace Social.Workers.Consumers
             _logger = logger;
         }
 
-        protected override Task ConsumeMessageAsync(DiscoverTwitterAccountMessage message, CancellationToken token = default)
+        protected override async Task ConsumeMessageAsync(DiscoverTwitterAccountMessage message, CancellationToken token = default)
         {
             try
             {
-                Console.WriteLine(JsonSerializer.Serialize(message));
+                Console.WriteLine(JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true }));
+                var user = await _service.GetUserByUsernameAsync(message.TwitterUsername, token);
+                if (user == null)
+                {
+                    _logger.Information($"Twitter user {message.TwitterUsername} does not exist.");
+                    return;
+                }
+
+                Console.WriteLine(JsonSerializer.Serialize(user, new JsonSerializerOptions { WriteIndented = true }));
+                var reconcileMessage = new ReconcileTweetsMessage
+                {
+                    CorrelationId = message.CorrelationId,
+                    ProviderId = message.ProviderId,
+                    TwitterUserId = user.UserId
+                };
+                _queueClient.WriteMessageAsync(reconcileMessage, token);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Console.WriteLine(e);   // TODO: Log error
             }
-            return Task.CompletedTask;
-
-            //try
-            //{
-            //    var user = await _service.GetUserByUsernameAsync(message.TwitterUsername, token);
-            //    Console.WriteLine(JsonSerializer.Serialize(user));
-
-            //    if (user == null) return;
-
-
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e);
-            //}
         }
     }
 }

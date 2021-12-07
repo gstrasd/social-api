@@ -15,7 +15,7 @@ namespace Social.Messages
         public Guid CorrelationId { get; set; }
         [JsonPropertyName("providerId")]
         public string ProviderId { get; set; }
-        [JsonPropertyName("twitterAccount")]
-        public string TwitterUsername { get; set; }
+        [JsonPropertyName("twitterId")]
+        public string TwitterUserId { get; set; }
     }
 }

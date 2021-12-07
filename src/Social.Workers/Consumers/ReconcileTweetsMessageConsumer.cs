@@ -24,17 +24,19 @@ namespace Social.Workers.Consumers
             _logger = logger;
         }
 
-        protected override Task ConsumeMessageAsync(ReconcileTweetsMessage message, CancellationToken token = default)
+        protected override async Task ConsumeMessageAsync(ReconcileTweetsMessage message, CancellationToken token = default)
         {
             try
             {
-                Console.WriteLine(JsonSerializer.Serialize(message));
+                Console.WriteLine(JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true }));
+                var tweets = await _service.GetTweetsByUserId(message.TwitterUserId, default, default, 50, token);
+
+                Console.WriteLine(JsonSerializer.Serialize(tweets, new JsonSerializerOptions { WriteIndented = true }));
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-            return Task.CompletedTask;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Social.Workers.Consumers
         {
             try
             {
-                Console.WriteLine(JsonSerializer.Serialize(message));
+                Console.WriteLine(JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true }));
             }
             catch (Exception e)
             {
