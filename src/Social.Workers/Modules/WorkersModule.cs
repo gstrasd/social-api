@@ -30,35 +30,28 @@ namespace Social.Workers.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterGenericQueueMessageWorkerFactory();
-
-            builder.Register(c => c.Resolve<QueueMessageWorker<DiscoverInstagramAccountMessage>>(
-                new NamedParameter("queue", "discover-instagram-account"),
-                new NamedParameter("name", "Instagram Account Processor")))
-                .SingleInstance()
-                .As<IHostedService>();
-
-            builder.Register(c => c.Resolve<QueueMessageWorker<DiscoverTwitterAccountMessage>>(
-                    new NamedParameter("queue", "discover-twitter-account"),
-                    new NamedParameter("name", "Twitter Account Processor")))
-                .SingleInstance()
-                .As<IHostedService>();
-
-            builder.Register(c =>
-                {
-                    var buffer = c.Resolve<ISourceBlock<DiscoverInstagramAccountMessage>>();
-                    return new DiscoverInstagramAccountMessageConsumer(buffer);
-                })
+            /* Instagram Account Processor */
+            builder.Register(c => new DiscoverInstagramAccountMessageConsumer(
+                    c.Resolve<ISourceBlock<DiscoverInstagramAccountMessage>>(), 
+                    c.Resolve<ILogger>()))
                 .SingleInstance()
                 .As<MessageConsumer<DiscoverInstagramAccountMessage>>();
 
-            builder.Register(c =>
-                {
-                    var buffer = c.Resolve<ISourceBlock<DiscoverTwitterAccountMessage>>();
-                    return new DiscoverTwitterAccountMessageConsumer(c.Resolve<ITwitterService>(), buffer, c.Resolve<ILogger>());
-                })
+            /* Twitter Account Processor */
+            builder.Register(c => new DiscoverTwitterAccountMessageConsumer(
+                    c.Resolve<ITwitterService>(), 
+                    c.Resolve<ISourceBlock<DiscoverTwitterAccountMessage>>(), 
+                    c.Resolve<ILogger>()))
                 .SingleInstance()
                 .As<MessageConsumer<DiscoverTwitterAccountMessage>>();
+
+            /* Twitter Tweet Processor */
+            builder.Register(c => new ReconcileTweetsMessageConsumer(
+                    c.Resolve<ITwitterService>(), 
+                    c.Resolve<ISourceBlock<ReconcileTweetsMessage>>(), 
+                    c.Resolve<ILogger>()))
+                .SingleInstance()
+                .As<MessageConsumer<ReconcileTweetsMessage>>();
         }
     }
 }

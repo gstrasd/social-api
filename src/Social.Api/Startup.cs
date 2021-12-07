@@ -66,6 +66,7 @@ namespace Social.Api
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
+            builder.RegisterQueueMessageWorkers(_configuration);
             builder.RegisterModule(new ApiModule(_configuration));
             builder.RegisterModule(new ApplicationModule(_configuration));
             builder.RegisterModule(new InfrastructureModule(_configuration));

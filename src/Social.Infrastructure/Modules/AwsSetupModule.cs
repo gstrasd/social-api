@@ -21,6 +21,7 @@ namespace Social.Infrastructure.Modules
             _configuration = configuration;
         }
 
+        // TODO: Only execute these steps if AWS is the queue provider
         protected override void Load(ContainerBuilder builder)
         {
             // Create discover-instagram-account queue
@@ -56,6 +57,30 @@ namespace Social.Infrastructure.Modules
                             return;
                         }
                         var queueUrl = await manager.CreateQueueAsync("discover-twitter-account");
+                        Console.WriteLine($"Queue created with URL {queueUrl}.");
+                    });
+                    return step;
+                })
+                .SingleInstance()
+                .As<IInstallerStep>();
+
+            builder.Register(c => new SqsQueueManager(c.Resolve<IAmazonSQS>()))
+                .As<IQueueManager>()
+                .InstancePerDependency();
+
+            // Create reconcile-tweets queue
+            builder.Register(c =>
+                {
+                    var manager = c.Resolve<IQueueManager>();
+                    var step = new InstallerStep("Create reconcile-tweets queue", async () =>
+                    {
+                        var exists = await manager.QueueExistsAsync("reconcile-tweets");
+                        if (exists)
+                        {
+                            Console.WriteLine("Queue already exists.");
+                            return;
+                        }
+                        var queueUrl = await manager.CreateQueueAsync("reconcile-tweets");
                         Console.WriteLine($"Queue created with URL {queueUrl}.");
                     });
                     return step;

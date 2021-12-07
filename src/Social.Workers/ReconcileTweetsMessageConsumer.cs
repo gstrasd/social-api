@@ -8,20 +8,23 @@ using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Library.Dataflow;
 using Serilog;
+using Social.Domain.Twitter;
 using Social.Messages;
 
 namespace Social.Workers
 {
-    internal class DiscoverInstagramAccountMessageConsumer : MessageConsumer<DiscoverInstagramAccountMessage>
+    internal class ReconcileTweetsMessageConsumer : MessageConsumer<ReconcileTweetsMessage>
     {
+        private readonly ITwitterService _service;
         private readonly ILogger _logger;
 
-        public DiscoverInstagramAccountMessageConsumer(ISourceBlock<DiscoverInstagramAccountMessage> buffer, ILogger logger, CancellationToken token = default) : base(buffer, token)
+        public ReconcileTweetsMessageConsumer(ITwitterService service, ISourceBlock<ReconcileTweetsMessage> buffer, ILogger logger, CancellationToken token = default) : base(buffer, token)
         {
+            _service = service;
             _logger = logger;
         }
 
-        protected override Task ConsumeMessageAsync(DiscoverInstagramAccountMessage message, CancellationToken token = default)
+        protected override Task ConsumeMessageAsync(ReconcileTweetsMessage message, CancellationToken token = default)
         {
             try
             {

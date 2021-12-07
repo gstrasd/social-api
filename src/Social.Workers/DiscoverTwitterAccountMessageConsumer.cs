@@ -25,22 +25,31 @@ namespace Social.Workers
             _logger = logger;
         }
 
-        protected override async Task ConsumeMessageAsync(DiscoverTwitterAccountMessage message, CancellationToken token = default)
+        protected override Task ConsumeMessageAsync(DiscoverTwitterAccountMessage message, CancellationToken token = default)
         {
             try
             {
-                var user = await _service.GetUserByUsernameAsync(message.TwitterUsername, token);
-                Console.WriteLine(JsonSerializer.Serialize(user));
-
-                if (user == null) return;
-
-
+                Console.WriteLine(JsonSerializer.Serialize(message));
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                //throw;
             }
+            return Task.CompletedTask;
+
+            //try
+            //{
+            //    var user = await _service.GetUserByUsernameAsync(message.TwitterUsername, token);
+            //    Console.WriteLine(JsonSerializer.Serialize(user));
+
+            //    if (user == null) return;
+
+
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e);
+            //}
         }
     }
 }
