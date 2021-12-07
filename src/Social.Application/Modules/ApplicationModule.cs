@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Social.Domain;
 
@@ -12,11 +13,11 @@ namespace Social.Application.Modules
 {
     public class ApplicationModule : Module
     {
-        private readonly IConfiguration _configuration;
+        private readonly HostBuilderContext _context;
 
-        public ApplicationModule(IConfiguration configuration)
+        public ApplicationModule(HostBuilderContext context)
         {
-            _configuration = configuration;
+            _context = context;
         }
 
         protected override void Load(ContainerBuilder builder)

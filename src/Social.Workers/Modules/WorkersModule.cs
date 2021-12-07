@@ -22,11 +22,11 @@ namespace Social.Workers.Modules
 {
     public class WorkersModule : Module
     {
-        private readonly IConfiguration _configuration;
+        private readonly HostBuilderContext _context;
 
-        public WorkersModule(IConfiguration configuration)
+        public WorkersModule(HostBuilderContext context)
         {
-            _configuration = configuration;
+            _context = context;
         }
 
         protected override void Load(ContainerBuilder builder)

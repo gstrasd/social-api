@@ -5,6 +5,7 @@ using Autofac;
 using Library.Installation;
 using Microsoft.Extensions.Hosting;
 using Social.Infrastructure.Modules;
+using Social.Installer.Modules;
 
 namespace Social.Installer
 {
@@ -18,21 +19,16 @@ namespace Social.Installer
 
         public static IInstallerBuilder CreateInstallerBuilder()
         {
-            var builder = Library.Installation.Installer
+            var installerBuilder = Library.Installation.Installer
                 .CreateDefaultBuilder()
-                //.ConfigureSetupConfiguration(c =>
-                //{
-                //    c.Properties[HostDefaults.EnvironmentKey] = environment;
-                //    c.Properties[HostDefaults.ContentRootKey] = Environment.CurrentDirectory;
-                //})
                 .UseAppSettings()
-                .ConfigureContainer((context, container) =>
+                .ConfigureContainer((context, builder) =>
                 {
-                    container.RegisterModule(new AwsSetupModule(context.Configuration));
-                    container.RegisterModule(new AwsModule(context.Configuration));
+                    builder.RegisterModule(new AwsSetupModule(context));
+                    builder.RegisterModule(new AwsModule(context));
                 });
 
-            return builder;
+            return installerBuilder;
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Library.Configuration;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Social.Domain;
 using Social.Domain.Twitter;
@@ -17,11 +18,11 @@ namespace Social.Infrastructure.Modules
 {
     public class InfrastructureModule : Module
     {
-        private readonly IConfiguration _configuration;
+        private readonly HostBuilderContext _context;
 
-        public InfrastructureModule(IConfiguration configuration)
+        public InfrastructureModule(HostBuilderContext context)
         {
-            _configuration = configuration;
+            _context = context;
         }
 
         protected override void Load(ContainerBuilder builder)
@@ -31,7 +32,7 @@ namespace Social.Infrastructure.Modules
                 .SingleInstance()
                 .Named<HttpClient>("iframely");
 
-            builder.Register(_ => _configuration.Bind<IframelyConfiguration>("Iframely"))
+            builder.Register(_ => _context.Configuration.Bind<IframelyConfiguration>("Iframely"))
                 .SingleInstance()
                 .AsSelf();
 
@@ -51,7 +52,7 @@ namespace Social.Infrastructure.Modules
 
             builder.Register(c =>
                 {
-                    var configuration = _configuration.Bind<TwitterConfiguration>("Twitter");
+                    var configuration = _context.Configuration.Bind<TwitterConfiguration>("Twitter");
                     return new TwitterService(c.ResolveNamed<HttpClient>("twitter"), configuration, c.Resolve<ILogger>());
                 })
                 .SingleInstance()

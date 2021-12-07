@@ -14,25 +14,26 @@ using Library.Amazon;
 using Library.Dataflow;
 using Library.Platform.Queuing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace Social.Infrastructure.Modules
 {
     public class AwsModule : Module
     {
-        private readonly IConfiguration _configuration;
+        private readonly HostBuilderContext _context;
 
-        public AwsModule(IConfiguration configuration)
+        public AwsModule(HostBuilderContext context)
         {
-            _configuration = configuration;
+            _context = context;
         }
 
         protected override void Load(ContainerBuilder builder)
         {
             builder.Register(_ =>
                 {
-                    var accessKey = _configuration["Aws:AccessKey"];
-                    var secretKey = _configuration["Aws:SecretKey"];
-                    var options = _configuration.GetAWSOptions("Aws");
+                    var accessKey = _context.Configuration["Aws:AccessKey"];
+                    var secretKey = _context.Configuration["Aws:SecretKey"];
+                    var options = _context.Configuration.GetAWSOptions("Aws");
                     options.Credentials = new BasicAWSCredentials(accessKey, secretKey);
                     return options;
                 })
@@ -41,12 +42,13 @@ namespace Social.Infrastructure.Modules
 
             builder.Register(c =>
                 {
-                    var options = c.ResolveNamed<AWSOptions>(_configuration["EnvironmentName"] ?? _configuration["ASPNETCORE_ENVIRONMENT"] ?? _configuration["DOTNET_ENVIRONMENT"]);
+                    // TODO: this code shouldn't have to reference config settings to get the environment, The should come from the host builder context
+                    var options = c.ResolveNamed<AWSOptions>(_context.HostingEnvironment.EnvironmentName);
                     var client = options.CreateServiceClient<IAmazonSQS>();
 
                     return client;
                 })
-                .OnlyIf(_ => _configuration["Providers:Queueing"].Equals("aws", StringComparison.InvariantCultureIgnoreCase))
+                .OnlyIf(_ => _context.Configuration["Providers:Queueing"].Equals("aws", StringComparison.InvariantCultureIgnoreCase))
                 .InstancePerDependency()
                 .As<IAmazonSQS>();
 
@@ -56,12 +58,12 @@ namespace Social.Infrastructure.Modules
                     if (queue == null) throw new ArgumentNullException("queue", "To resolve an SQS queue client, the queue name must be supplied as a named parameter with the name \"queue\"..");
 
                     var client = c.Resolve<IAmazonSQS>();
-                    var configuration = _configuration.GetSqsQueueClientConfiguration($"Aws:Queues:{queue}");
+                    var configuration = _context.Configuration.GetSqsQueueClientConfiguration($"Aws:Queues:{queue}");
                     var queueClient = new SqsQueueClient(client, configuration);
 
                     return queueClient;
                 })
-                .OnlyIf(_ => _configuration["Providers:Queueing"].Equals("aws", StringComparison.InvariantCultureIgnoreCase))
+                .OnlyIf(_ => _context.Configuration["Providers:Queueing"].Equals("aws", StringComparison.InvariantCultureIgnoreCase))
                 .InstancePerDependency()
                 .As<IQueueClient>();
         }

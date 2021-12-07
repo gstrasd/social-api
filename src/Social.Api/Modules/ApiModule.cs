@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Social.Api.Controllers;
 using Social.Domain;
@@ -12,11 +13,11 @@ namespace Social.Api.Modules
 {
     public class ApiModule : Module
     {
-        private readonly IConfiguration _configuration;
+        private readonly HostBuilderContext _context;
 
-        public ApiModule(IConfiguration configuration)
+        public ApiModule(HostBuilderContext context)
         {
-            _configuration = configuration;
+            _context = context;
         }
 
         protected override void Load(ContainerBuilder builder)

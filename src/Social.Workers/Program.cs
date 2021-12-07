@@ -23,7 +23,7 @@ namespace Social.Workers
 
         public static IHostBuilder CreateHostBuilder()
         {
-            var builder = Host
+            var hostBuilder = Host
                 .CreateDefaultBuilder()
                 .UseAutofac()
                 .ConfigureServices((context, services) =>
@@ -33,16 +33,16 @@ namespace Social.Workers
                         options.Settings = new ConfigurationLoggerSettings(context.Configuration);
                     });
                 })
-                .ConfigureContainer((HostBuilderContext c, ContainerBuilder cb) =>
+                .ConfigureContainer((HostBuilderContext context, ContainerBuilder builder) =>
                 {
-                    cb.RegisterMessageWorkers(c.Configuration.Bind<List<MessageWorkerConfiguration>>("MessageWorkers"));
-                    cb.RegisterModule(new ApplicationModule(c.Configuration));
-                    cb.RegisterModule(new InfrastructureModule(c.Configuration));
-                    cb.RegisterModule(new AwsModule(c.Configuration));
-                    cb.RegisterModule(new WorkersModule(c.Configuration));
+                    builder.RegisterMessageWorkers(context.Configuration.Bind<List<MessageWorkerConfiguration>>("MessageWorkers"));
+                    builder.RegisterModule(new ApplicationModule(context));
+                    builder.RegisterModule(new InfrastructureModule(context));
+                    builder.RegisterModule(new AwsModule(context));
+                    builder.RegisterModule(new WorkersModule(context));
                 });
 
-            return builder;
+            return hostBuilder;
         }
     }
 }

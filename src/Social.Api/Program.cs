@@ -33,24 +33,22 @@ namespace Social.Api
 
         public static IHostBuilder CreateHostBuilder()
         {
-            var builder = Host
+            var hostBuilder = Host
                 .CreateDefaultBuilder()
                 .UseAutofac()
-                .ConfigureContainer((HostBuilderContext c, ContainerBuilder cb) =>
+                .ConfigureContainer((HostBuilderContext context, ContainerBuilder builder) =>
                     {
-                        cb.RegisterModule(new ApiModule(c.Configuration));
-                        cb.RegisterModule(new ApplicationModule(c.Configuration));
-                        cb.RegisterModule(new InfrastructureModule(c.Configuration));
-                        cb.RegisterModule(new AwsModule(c.Configuration));
+                        builder.RegisterModule(new ApiModule(context));
+                        builder.RegisterModule(new ApplicationModule(context));
+                        builder.RegisterModule(new InfrastructureModule(context));
+                        builder.RegisterModule(new AwsModule(context));
                     })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });
 
-            return builder;
+            return hostBuilder;
         }
-
-        
     }
 }

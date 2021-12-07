@@ -9,16 +9,17 @@ using Library.Amazon;
 using Library.Installation;
 using Library.Platform.Queuing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
-namespace Social.Installer
+namespace Social.Installer.Modules
 {
     public class AwsSetupModule : Module
     {
-        private readonly IConfiguration _configuration;
+        private readonly HostBuilderContext _context;
 
-        public AwsSetupModule(IConfiguration configuration)
+        public AwsSetupModule(HostBuilderContext context)
         {
-            _configuration = configuration;
+            _context = context;
         }
 
         // TODO: Only execute these steps if AWS is the queue provider
