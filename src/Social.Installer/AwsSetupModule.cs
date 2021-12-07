@@ -10,7 +10,7 @@ using Library.Installation;
 using Library.Platform.Queuing;
 using Microsoft.Extensions.Configuration;
 
-namespace Social.Infrastructure.Modules
+namespace Social.Installer
 {
     public class AwsSetupModule : Module
     {

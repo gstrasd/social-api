@@ -24,17 +24,17 @@ namespace Social.Api
     {
         public static void Main(string[] args)
         {
-            var command = new HostCommand(CreateHostBuilder(args));
-            command.AddCommand(new InstallerCommand(CreateInstallerBuilder()));
-            command.Invoke(args);
+            var builder = CreateHostBuilder();
+            var host = builder.Build();
+            host.Run();
 
             Console.ReadKey();      // TODO: Remove this later once you figure out how to capture exceptions that shut down 
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args)
+        public static IHostBuilder CreateHostBuilder()
         {
             var builder = Host
-                .CreateDefaultBuilder(args)
+                .CreateDefaultBuilder()
                 .UseAutofac()
                 .ConfigureContainer((HostBuilderContext c, ContainerBuilder cb) =>
                     {
@@ -51,18 +51,6 @@ namespace Social.Api
             return builder;
         }
 
-        public static IInstallerBuilder CreateInstallerBuilder()
-        {
-            var builder = Installer
-                .CreateDefaultBuilder()
-                .UseAppSettings()
-                .ConfigureContainer((context, container) =>
-                {
-                    container.RegisterModule(new AwsSetupModule(context.Configuration));
-                    container.RegisterModule(new AwsModule(context.Configuration));
-                });
-
-            return builder;
-        }
+        
     }
 }

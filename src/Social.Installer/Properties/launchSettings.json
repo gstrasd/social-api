@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Social.Installer": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

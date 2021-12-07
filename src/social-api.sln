@@ -36,9 +36,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "messages", "messages", "{2D
 		messages\reconcile-tweets.json = messages\reconcile-tweets.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Social.Messages", "Social.Messages\Social.Messages.csproj", "{D038954A-B798-47B8-8CF6-02C3B5BC0A30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Social.Messages", "Social.Messages\Social.Messages.csproj", "{D038954A-B798-47B8-8CF6-02C3B5BC0A30}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Social.Workers", "Social.Workers\Social.Workers.csproj", "{A393CB2D-7FED-4BD2-9597-511772EA5F4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Social.Installer", "Social.Installer\Social.Installer.csproj", "{F5D5DB01-9044-4EBD-8618-C825AD1BA7E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,6 +104,10 @@ Global
 		{A393CB2D-7FED-4BD2-9597-511772EA5F4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A393CB2D-7FED-4BD2-9597-511772EA5F4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A393CB2D-7FED-4BD2-9597-511772EA5F4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5D5DB01-9044-4EBD-8618-C825AD1BA7E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5D5DB01-9044-4EBD-8618-C825AD1BA7E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5D5DB01-9044-4EBD-8618-C825AD1BA7E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5D5DB01-9044-4EBD-8618-C825AD1BA7E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>install</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\libraries\src\Library.Amazon\Library.Amazon.csproj" />
+    <ProjectReference Include="..\..\..\libraries\src\Library.Autofac\Library.Autofac.csproj" />
+    <ProjectReference Include="..\..\..\libraries\src\Library.Installation\Library.Installation.csproj" />
+    <ProjectReference Include="..\..\..\libraries\src\Library\Library.csproj" />
+    <ProjectReference Include="..\Social.Infrastructure\Social.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
