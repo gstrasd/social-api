@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Autofac;
 using Microsoft.Extensions.Hosting;
 using Library.Autofac;
 using Library.Configuration;
 using Library.Hosting;
 using Library.Serilog;
+using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using Social.Application.Modules;
 using Social.Infrastructure.Modules;
 using Social.Workers.Modules;
@@ -18,6 +21,14 @@ namespace Social.Workers
         {
             var builder = CreateHostBuilder();
             var host = builder.Build();
+
+            var logger = host.Services.GetService<ILogger>();
+            host.Services.GetServices<IBackgroundService>().ForEach(b =>
+            {
+                b.OnStart += w => logger!.Information($"Starting {w.Name}...");
+                b.OnStop += w => logger!.Information($"Stopping {w.Name}...");
+            });
+
             host.Run();
         }
 
