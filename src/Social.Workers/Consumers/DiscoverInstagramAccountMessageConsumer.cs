@@ -25,11 +25,11 @@ namespace Social.Workers.Consumers
         {
             try
             {
-                Console.WriteLine(JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true }));
+                _logger.Verbose(JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true }));
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.Error(e, $"An error occurred while trying to process message \"{message.CorrelationId}\" of type \"{message.GetType()}\". The message will be forwarded to the retry queue.");
             }
             return Task.CompletedTask;
         }

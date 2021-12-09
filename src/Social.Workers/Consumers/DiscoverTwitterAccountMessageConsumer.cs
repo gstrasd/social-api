@@ -32,7 +32,7 @@ namespace Social.Workers.Consumers
         {
             try
             {
-                Console.WriteLine(JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true }));
+                _logger.Verbose(JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true }));
                 var user = await _service.GetUserByUsernameAsync(message.TwitterUsername, token);
                 if (user == null)
                 {
@@ -40,7 +40,7 @@ namespace Social.Workers.Consumers
                     return;
                 }
 
-                Console.WriteLine(JsonSerializer.Serialize(user, new JsonSerializerOptions { WriteIndented = true }));
+                _logger.Verbose(JsonSerializer.Serialize(user, new JsonSerializerOptions { WriteIndented = true }));
                 var reconcileMessage = new ReconcileTweetsMessage
                 {
                     CorrelationId = message.CorrelationId,
@@ -51,7 +51,7 @@ namespace Social.Workers.Consumers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);   // TODO: Log error
+                _logger.Error(e, $"An error occurred while trying to process message \"{message.CorrelationId}\" of type \"{message.GetType()}\". The message will be forwarded to the retry queue.");
             }
         }
     }

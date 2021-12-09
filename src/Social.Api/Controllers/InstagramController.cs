@@ -36,7 +36,7 @@ namespace Social.Api.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.Error(e, $"An unexpected error occurred while retrieving an instagram post.");
                 return StatusCode(500);
             }
         }

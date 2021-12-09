@@ -28,14 +28,14 @@ namespace Social.Workers.Consumers
         {
             try
             {
-                Console.WriteLine(JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true }));
+                _logger.Verbose(JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true }));
                 var tweets = await _service.GetTweetsByUserId(message.TwitterUserId, default, default, 50, token);
 
-                Console.WriteLine(JsonSerializer.Serialize(tweets, new JsonSerializerOptions { WriteIndented = true }));
+                _logger.Verbose(JsonSerializer.Serialize(tweets, new JsonSerializerOptions { WriteIndented = true }));
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.Error(e, $"An error occurred while trying to process message \"{message.CorrelationId}\" of type \"{message.GetType()}\". The message will be forwarded to the retry queue.");
             }
         }
     }
