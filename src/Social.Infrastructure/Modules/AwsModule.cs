@@ -18,6 +18,9 @@ using Library.Platform.Queuing;
 using Library.Platform.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using Social.Infrastructure.Aws;
+using Social.Infrastructure.Domain;
 
 namespace Social.Infrastructure.Modules
 {
@@ -52,7 +55,6 @@ namespace Social.Infrastructure.Modules
 
                     return client;
                 })
-                .OnlyIf(_ => _context.Configuration["Providers:Queueing"].Equals("aws", StringComparison.InvariantCultureIgnoreCase))
                 .InstancePerDependency()
                 .As<IAmazonSQS>();
 
@@ -85,15 +87,16 @@ namespace Social.Infrastructure.Modules
 
                     return queueClient;
                 })
-                .OnlyIf(_ => _context.Configuration["Providers:Queueing"].Equals("aws", StringComparison.InvariantCultureIgnoreCase))
+                .OnlyIf(_ => _context.Configuration["PlatformProviders:Queueing"].Equals("aws", StringComparison.InvariantCultureIgnoreCase))
                 .InstancePerDependency()
                 .As<IQueueClient>();
 
-            // Infrastructure table client
-            builder.Register(c => new DynamoTableStorageClient(c.Resolve<IDynamoDBContext>()))
-                .OnlyIf(_ => _context.Configuration["Providers:TableStorage"].Equals("aws", StringComparison.InvariantCultureIgnoreCase))
-                .InstancePerDependency()
-                .As<ITableStorageClient>();
+            builder.Register(c => new SocialMediaRepository(c.Resolve<IDynamoDBContext>(), c.Resolve<ILogger>()))
+                .OnlyIf(_ => _context.Configuration["PlatformProviders:Queueing"].Equals("aws", StringComparison.InvariantCultureIgnoreCase))
+                .SingleInstance()
+                .As<ISocialMediaRepository>();
+
+          
         }
     }
 }

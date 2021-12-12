@@ -9,7 +9,7 @@ namespace Social.Infrastructure.Domain
 {
     public interface ISocialMediaRepository
     {
-        Task<Search?> FindPreviousSearchAsync(string search, CancellationToken token = default);
-        Task SaveSearchAsync(Search search, CancellationToken token = default);
+        Task<SearchResult?> FindSearchResultAsync(string value, SocialMediaType type, CancellationToken token = default);
+        Task SaveSearchResultAsync(SearchResult searchResult, CancellationToken token = default);
     }
 }

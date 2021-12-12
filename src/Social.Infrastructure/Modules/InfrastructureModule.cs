@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Social.Domain;
 using Social.Domain.Twitter;
+using Social.Infrastructure.Aws;
 using Social.Infrastructure.Domain;
 using Social.Infrastructure.Iframely;
 using Social.Infrastructure.Twitter;
@@ -47,7 +48,7 @@ namespace Social.Infrastructure.Modules
                 .SingleInstance()
                 .Named<HttpClient>("instagram");
 
-            /* Twitter */
+            /*********************** Twitter *************************/
             builder.Register(_ => new HttpClient())
                 .SingleInstance()
                 .Named<HttpClient>("twitter");
@@ -59,10 +60,6 @@ namespace Social.Infrastructure.Modules
                 })
                 .SingleInstance()
                 .As<ITwitterService>();
-
-            builder.Register(c => new SocialMediaRepository(c.Resolve<ITableStorageClient>(), c.Resolve<ILogger>()))
-                .SingleInstance()
-                .As<ISocialMediaRepository>();
         }
     }
 }
