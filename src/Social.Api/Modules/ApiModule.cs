@@ -31,7 +31,10 @@ namespace Social.Api.Modules
 
             builder.Register(_ => new JsonSerializerOptions
                 {
-                    Converters = {new JsonStringEnumConverter()}
+                    WriteIndented = true,
+                    PropertyNameCaseInsensitive = false,
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    Converters = { new JsonStringEnumConverter() }
                 })
                 .SingleInstance()
                 .AsSelf();
