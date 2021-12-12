@@ -4,6 +4,7 @@ using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Social.Domain;
+using Social.Domain.Instagram;
 
 namespace Social.Api.Controllers
 {

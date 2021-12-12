@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Serilog;
 using Social.Domain;
+using Social.Domain.Instagram;
 
 namespace Social.Application
 {

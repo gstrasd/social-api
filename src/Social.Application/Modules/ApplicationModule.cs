@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Social.Domain;
+using Social.Domain.Instagram;
 
 namespace Social.Application.Modules
 {
