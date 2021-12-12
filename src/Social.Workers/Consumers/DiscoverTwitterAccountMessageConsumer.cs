@@ -20,12 +20,12 @@ namespace Social.Workers.Consumers
     internal class DiscoverTwitterAccountMessageConsumer : MessageConsumer<DiscoverTwitterAccountMessage>
     {
         private readonly ITwitterService _twitterService;
-        private readonly ISocialMediaRepository _socialMediaRepository;
+        private readonly ISearchRepository _socialMediaRepository;
         private readonly IQueueClient _queueClient;
         private readonly JsonSerializerOptions _serializerOptions;
         private readonly ILogger _logger;
 
-        public DiscoverTwitterAccountMessageConsumer(ITwitterService twitterService, ISocialMediaRepository socialMediaRepository, IQueueClient queueClient, ISourceBlock<DiscoverTwitterAccountMessage> buffer, JsonSerializerOptions serializerOptions, ILogger logger, CancellationToken token = default) :
+        public DiscoverTwitterAccountMessageConsumer(ITwitterService twitterService, ISearchRepository socialMediaRepository, IQueueClient queueClient, ISourceBlock<DiscoverTwitterAccountMessage> buffer, JsonSerializerOptions serializerOptions, ILogger logger, CancellationToken token = default) :
             base(buffer, token)
         {
             _twitterService = twitterService;
