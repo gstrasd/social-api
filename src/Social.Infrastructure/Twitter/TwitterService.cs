@@ -42,7 +42,7 @@ namespace Social.Infrastructure.Twitter
             
             var user = new TwitterUser
             {
-                UserId = data.Id,
+                Id = data.Id,
                 Name = data.Name,
                 Username = data.Username,
                 Created = data.Created,
