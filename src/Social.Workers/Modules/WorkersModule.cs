@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Social.Domain.Twitter;
+using Social.Infrastructure.Domain;
 using Social.Messages;
 using Social.Workers.Consumers;
 using Module = Autofac.Module;
@@ -35,6 +36,9 @@ namespace Social.Workers.Modules
         {
             builder.Register(_ => new JsonSerializerOptions
                 {
+                    WriteIndented = true,
+                    PropertyNameCaseInsensitive = false,
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     Converters = { new JsonStringEnumConverter() }
                 })
                 .SingleInstance()
@@ -64,8 +68,10 @@ namespace Social.Workers.Modules
 
             builder.Register(c => new DiscoverTwitterAccountMessageConsumer(
                     c.Resolve<ITwitterService>(), 
+                    c.Resolve<ISocialMediaRepository>(),
                     c.Resolve<IQueueClient>(new NamedParameter("queue", "reconcile-tweets")),
                     c.Resolve<ISourceBlock<DiscoverTwitterAccountMessage>>(), 
+                    c.Resolve<JsonSerializerOptions>(),
                     c.Resolve<ILogger>()))
                 .SingleInstance()
                 .As<MessageConsumer<DiscoverTwitterAccountMessage>>();
