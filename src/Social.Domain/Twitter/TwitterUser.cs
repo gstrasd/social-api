@@ -11,7 +11,6 @@ namespace Social.Domain.Twitter
         public string Id { get; set; } = default!;
         public string Name { get; set; } = default!;
         public string Username { get; set; } = default!;
-        public DateTime? Created { get; set; }
         public string? Description { get; set; }
         public Uri? ProfileUrl { get; set; }
         public Uri? ProfileImageUrl { get; set; }

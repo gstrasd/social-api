@@ -45,7 +45,6 @@ namespace Social.Infrastructure.Twitter
                 Id = data.Id,
                 Name = data.Name,
                 Username = data.Username,
-                Created = data.Created,
                 Description = data.Description,
                 ProfileUrl = data.Url,
                 ProfileImageUrl = data.ProfileImageUrl

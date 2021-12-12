@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Social.Domain.Twitter
+namespace Social.Infrastructure.Twitter
 {
     public class TwitterConfiguration
     {
