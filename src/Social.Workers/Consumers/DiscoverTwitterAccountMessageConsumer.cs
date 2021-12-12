@@ -39,7 +39,7 @@ namespace Social.Workers.Consumers
         {
             try
             {
-                _logger.Debug($"Message {message.CorrelationId} has been received.\n{JsonSerializer.Serialize(message, _serializerOptions)}");
+                _logger.Verbose($"Message {message.CorrelationId} has been received.\n{JsonSerializer.Serialize(message, _serializerOptions)}");
 
                 // Validate message
                 var results = new List<ValidationResult>();
@@ -51,24 +51,16 @@ namespace Social.Workers.Consumers
                 }
 
                 // Find previous search result
-                var previousSearch = await _socialMediaRepository.FindPreviousSearchAsync(message.TwitterUsername, token);
-                var searchResult = previousSearch?.Results.FirstOrDefault(r => r.SocialMediaType == SocialMediaType.Twitter);
-                if (searchResult is {Success: false})
+                var searchResult = await _socialMediaRepository.FindSearchResultAsync(message.TwitterUsername, SocialMediaType.Twitter, token);
+                if (searchResult is {Success: true})
                 {
-                    _logger.Information($"Twitter user {message.TwitterUsername} was previously searched and did not locate an account.");
+                    _logger.Debug($"Twitter user {message.TwitterUsername} was previously searched and already associated with a provider.");
                     return;
                 }
 
-                if (searchResult is {Success: true})
+                if (searchResult is {Success: false})
                 {
-                    if (searchResult.ProviderId == message.ProviderId)
-                    {
-                        _logger.Information($"Twitter user {message.TwitterUsername} already exists and associated with provider {message.ProviderId}.");
-                    }
-                    else
-                    {
-                        _logger.Warning($"Twitter user {message.TwitterUsername} was previously search and found to be associated with provider {searchResult.ProviderId}. However, the message indicates that it should belong to provider {message.ProviderId}. Please verify proper messaging and ad parsing logic.");
-                    }
+                    _logger.Warning($"Twitter user {message.TwitterUsername} was previously searched and not found. Please review proper ad parsing logic.");
                     return;
                 }
 
@@ -76,32 +68,11 @@ namespace Social.Workers.Consumers
                 var user = await _twitterService.GetUserByUsernameAsync(message.TwitterUsername, token);
 
                 // Save search result
-                var search = previousSearch;
-                if (search != null)
-                {
-                    search.Results.Add(new() { ProviderId = message.ProviderId, SocialMediaType = SocialMediaType.Twitter, Success = user != null });
-                }
-                else
-                {
-                    search = new Search
-                    {
-                        Value = message.TwitterUsername,
-                        Results = new List<SearchResult>
-                        {
-                            new() {ProviderId = message.ProviderId, SocialMediaType = SocialMediaType.Twitter, Success = user != null}
-                        }
-                    };
-                }
-                _socialMediaRepository.SaveSearchAsync(search, token);
+                searchResult = new() {Value = message.TwitterUsername, Type = SocialMediaType.Twitter, Success = user != null};
+                _socialMediaRepository.SaveSearchResultAsync(searchResult, token);
 
-                // If a twitter user was not found, then end message processing
-                if (user == null)
-                {
-                    _logger.Information($"Twitter user {message.TwitterUsername} could not be found.");
-                    return;
-                }
 
-                // Associate this twitter user with supplied provider
+             
 
                 // Acquire tweets for this user
                 var reconcileMessage = new ReconcileTweetsMessage

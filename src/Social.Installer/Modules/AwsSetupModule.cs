@@ -105,7 +105,14 @@ namespace Social.Installer.Modules
                                 TableName = "SearchHistory",
                                 KeySchema = new List<KeySchemaElement>
                                 {
-                                    new() { AttributeName = "Value", KeyType = "HASH" }
+                                    new() { AttributeName = "Value", KeyType = "HASH" },
+                                    new() { AttributeName = "Type", KeyType = KeyType.RANGE }
+                                },
+                                AttributeDefinitions = new List<AttributeDefinition>
+                                {
+                                    new() { AttributeName = "Value", AttributeType = ScalarAttributeType.S },
+                                    new() { AttributeName = "Type", AttributeType = ScalarAttributeType.N },
+                                    new() { AttributeName = "Success", AttributeType = ScalarAttributeType.N }
                                 },
                                 ProvisionedThroughput = new ProvisionedThroughput { ReadCapacityUnits = 1, WriteCapacityUnits = 1 }
                             };
