@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
@@ -17,15 +19,19 @@ namespace Social.Workers.Consumers
 {
     internal class DiscoverTwitterAccountMessageConsumer : MessageConsumer<DiscoverTwitterAccountMessage>
     {
-        private readonly ITwitterService _service;
+        private readonly ITwitterService _twitterService;
+        private readonly ISocialMediaRepository _socialMediaRepository;
         private readonly IQueueClient _queueClient;
+        private readonly JsonSerializerOptions _serializerOptions;
         private readonly ILogger _logger;
 
-        public DiscoverTwitterAccountMessageConsumer(ITwitterService service, IQueueClient queueClient, ISourceBlock<DiscoverTwitterAccountMessage> buffer, ILogger logger, CancellationToken token = default) :
+        public DiscoverTwitterAccountMessageConsumer(ITwitterService twitterService, ISocialMediaRepository socialMediaRepository, IQueueClient queueClient, ISourceBlock<DiscoverTwitterAccountMessage> buffer, JsonSerializerOptions serializerOptions, ILogger logger, CancellationToken token = default) :
             base(buffer, token)
         {
-            _service = service;
+            _twitterService = twitterService;
+            _socialMediaRepository = socialMediaRepository;
             _queueClient = queueClient;
+            _serializerOptions = serializerOptions;
             _logger = logger;
         }
 
@@ -33,33 +39,76 @@ namespace Social.Workers.Consumers
         {
             try
             {
-                /*
-                 *  1.  Look up provider to see if this Twitter account already exists
-                 *  2.  If not found, look to see if this potential Twitter username has been checked before
-                 *  3.  If found, try to find the Twitter id for username
-                 *  4.  If not found, add a db record to indicate that this username look up failed so it won't be tried again
-                 *  5.  If found, add a db record to link this Twitter account to the provider
-                 *  6.  Send a reconcile-tweets message
-                 */
+                _logger.Debug($"Message {message.CorrelationId} has been received.\n{JsonSerializer.Serialize(message, _serializerOptions)}");
 
-
-
-
-
-                //_logger.Verbose(JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true }));
-                var user = await _service.GetUserByUsernameAsync(message.TwitterUsername, token);
-                if (user == null)
+                // Validate message
+                var results = new List<ValidationResult>();
+                if (!Validator.TryValidateObject(message, new ValidationContext(message), results, true))
                 {
-                    _logger.Information($"Twitter user {message.TwitterUsername} does not exist.");
+                    var error = new MessageValidationException("A discover-twitter-account message failed validation.", message, results);
+                    _logger.Warning(error, "A discover-twitter-account message was received that cannot be processed.");
                     return;
                 }
 
-                //_logger.Verbose(JsonSerializer.Serialize(user, new JsonSerializerOptions { WriteIndented = true }));
+                // Find previous search result
+                var previousSearch = await _socialMediaRepository.FindPreviousSearchAsync(message.TwitterUsername, token);
+                var searchResult = previousSearch?.Results.FirstOrDefault(r => r.SocialMediaType == SocialMediaType.Twitter);
+                if (searchResult is {Success: false})
+                {
+                    _logger.Information($"Twitter user {message.TwitterUsername} was previously searched and did not locate an account.");
+                    return;
+                }
+
+                if (searchResult is {Success: true})
+                {
+                    if (searchResult.ProviderId == message.ProviderId)
+                    {
+                        _logger.Information($"Twitter user {message.TwitterUsername} already exists and associated with provider {message.ProviderId}.");
+                    }
+                    else
+                    {
+                        _logger.Warning($"Twitter user {message.TwitterUsername} was previously search and found to be associated with provider {searchResult.ProviderId}. However, the message indicates that it should belong to provider {message.ProviderId}. Please verify proper messaging and ad parsing logic.");
+                    }
+                    return;
+                }
+
+                // Find twitter user
+                var user = await _twitterService.GetUserByUsernameAsync(message.TwitterUsername, token);
+
+                // Save search result
+                var search = previousSearch;
+                if (search != null)
+                {
+                    search.Results.Add(new() { ProviderId = message.ProviderId, SocialMediaType = SocialMediaType.Twitter, Success = user != null });
+                }
+                else
+                {
+                    search = new Search
+                    {
+                        Value = message.TwitterUsername,
+                        Results = new List<SearchResult>
+                        {
+                            new() {ProviderId = message.ProviderId, SocialMediaType = SocialMediaType.Twitter, Success = user != null}
+                        }
+                    };
+                }
+                _socialMediaRepository.SaveSearchAsync(search, token);
+
+                // If a twitter user was not found, then end message processing
+                if (user == null)
+                {
+                    _logger.Information($"Twitter user {message.TwitterUsername} could not be found.");
+                    return;
+                }
+
+                // Associate this twitter user with supplied provider
+
+                // Acquire tweets for this user
                 var reconcileMessage = new ReconcileTweetsMessage
                 {
                     CorrelationId = message.CorrelationId,
                     ProviderId = message.ProviderId,
-                    TwitterUserId = user.UserId
+                    TwitterUserId = user.Id
                 };
                 _queueClient.WriteMessageAsync(reconcileMessage, token);
             }
