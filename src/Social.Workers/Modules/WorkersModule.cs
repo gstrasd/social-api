@@ -5,6 +5,8 @@ using Library.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Library.Dataflow;
@@ -31,6 +33,13 @@ namespace Social.Workers.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
+            builder.Register(_ => new JsonSerializerOptions
+                {
+                    Converters = { new JsonStringEnumConverter() }
+                })
+                .SingleInstance()
+                .AsSelf();
+
             /* Instagram Account Processor */
             builder.Register(c => new QueueMessageProducer<DiscoverInstagramAccountMessage>(
                     c.Resolve<IQueueClient>(new NamedParameter("queue", "discover-instagram-account")),

@@ -35,7 +35,7 @@ namespace Social.Workers.Consumers
             }
             catch (Exception e)
             {
-                _logger.Error(e, $"An error occurred while trying to process message \"{message.CorrelationId}\" of type \"{message.GetType()}\". The message will be forwarded to the retry queue.");
+                _logger.Error(e, $"An error occurred while trying to process message \"{message.CorrelationId}\" of type \"{message.GetType()}\". The message will be forwarded to the dead letter queue.");
             }
         }
     }

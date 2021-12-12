@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
@@ -10,6 +9,8 @@ using Library.Dataflow;
 using Library.Platform.Queuing;
 using Serilog;
 using Social.Domain.Twitter;
+using Social.Infrastructure;
+using Social.Infrastructure.Domain;
 using Social.Messages;
 
 namespace Social.Workers.Consumers
@@ -32,7 +33,20 @@ namespace Social.Workers.Consumers
         {
             try
             {
-                _logger.Verbose(JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true }));
+                /*
+                 *  1.  Look up provider to see if this Twitter account already exists
+                 *  2.  If not found, look to see if this potential Twitter username has been checked before
+                 *  3.  If found, try to find the Twitter id for username
+                 *  4.  If not found, add a db record to indicate that this username look up failed so it won't be tried again
+                 *  5.  If found, add a db record to link this Twitter account to the provider
+                 *  6.  Send a reconcile-tweets message
+                 */
+
+
+
+
+
+                //_logger.Verbose(JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true }));
                 var user = await _service.GetUserByUsernameAsync(message.TwitterUsername, token);
                 if (user == null)
                 {
@@ -40,7 +54,7 @@ namespace Social.Workers.Consumers
                     return;
                 }
 
-                _logger.Verbose(JsonSerializer.Serialize(user, new JsonSerializerOptions { WriteIndented = true }));
+                //_logger.Verbose(JsonSerializer.Serialize(user, new JsonSerializerOptions { WriteIndented = true }));
                 var reconcileMessage = new ReconcileTweetsMessage
                 {
                     CorrelationId = message.CorrelationId,
@@ -51,7 +65,7 @@ namespace Social.Workers.Consumers
             }
             catch (Exception e)
             {
-                _logger.Error(e, $"An error occurred while trying to process message \"{message.CorrelationId}\" of type \"{message.GetType()}\". The message will be forwarded to the retry queue.");
+                _logger.Error(e, $"An error occurred while trying to process message \"{message.CorrelationId}\" of type \"{message.GetType()}\". The message will be forwarded to the dead letter queue.");
             }
         }
     }
