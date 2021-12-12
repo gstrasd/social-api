@@ -24,25 +24,4 @@ namespace Social.Infrastructure.Domain
         Instagram = 0,
         Twitter
     }
-
-    [DynamoDBTable("SocialProfile")]
-    public class SocialProfile
-    {
-        public string ProviderId { get; set; } = default!;
-        public string? TwitterId { get; set; }
-        public string? InstagramId { get; set; }
-        public TwitterProfile? Twitter { get; set; }
-    }
-
-    public class TwitterProfile
-    {
-        public string Id { get; set; } = default!;
-        public string Name { get; set; } = default!;
-        public string Username { get; set; } = default!;
-        public DateTime? CreatedDate { get; set; }
-        public string? Description { get; set; }
-        public string ProfileUrl { get; set; } = default!;
-        public string? ProfileImageUrl { get; set; }
-        public DateTime LastUpdatedDate { get; set; }
-    }
 }

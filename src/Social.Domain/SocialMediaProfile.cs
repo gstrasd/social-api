@@ -7,9 +7,8 @@ using Social.Domain.Twitter;
 
 namespace Social.Domain
 {
-    public class SocialMedia
+    public class SocialMediaProfile
     {
-        public string ProviderId { get; set; } = default!;
-        public TwitterUser? TwitterUser { get; set; }
+        public TwitterUser? Twitter { get; set; }
     }
 }

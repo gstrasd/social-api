@@ -26,9 +26,9 @@ namespace Social.Installer.Modules
 
         // TODO: Only execute these steps if AWS is the queue provider
         protected override void Load(ContainerBuilder builder)
-        {
-            // Create discover-instagram-account queue
-            builder.Register(c =>
+            {
+                // Create discover-instagram-account queue
+                builder.Register(c =>
                 {
                     var manager = c.Resolve<IQueueManager>();
                     var step = new InstallerStep("Create discover-instagram-account queue", async () =>
@@ -103,17 +103,68 @@ namespace Social.Installer.Modules
                             var request = new CreateTableRequest
                             {
                                 TableName = "SearchHistory",
-                                KeySchema = new List<KeySchemaElement>
+                                KeySchema = new()
                                 {
                                     new() { AttributeName = "Value", KeyType = "HASH" },
                                     new() { AttributeName = "Type", KeyType = KeyType.RANGE }
                                 },
-                                AttributeDefinitions = new List<AttributeDefinition>
+                                AttributeDefinitions = new()
                                 {
                                     new() { AttributeName = "Value", AttributeType = ScalarAttributeType.S },
                                     new() { AttributeName = "Type", AttributeType = ScalarAttributeType.N },
                                     new() { AttributeName = "Success", AttributeType = ScalarAttributeType.N }
                                 },
+                                ProvisionedThroughput = new ProvisionedThroughput { ReadCapacityUnits = 1, WriteCapacityUnits = 1 }
+                            };
+
+                            await client.CreateTableAsync(request);
+                            Console.WriteLine("SearchHistory table created.");
+                        }
+                    });
+
+                    return step;
+                })
+                .SingleInstance()
+                .As<InstallerStep>();
+
+            // Create SocialProfile table
+            builder.Register(c =>
+                {
+                    var client = c.Resolve<IAmazonDynamoDB>();
+                    var step = new InstallerStep("Create SocialProfile table", async () =>
+                    {
+                        var listTablesResponse = await client.ListTablesAsync();
+                        if (listTablesResponse.TableNames.Contains("SocialProfile"))
+                        {
+                            Console.WriteLine("SocialProfile table already exists.");
+                        }
+                        else
+                        {
+                            var request = new CreateTableRequest
+                            {
+                                TableName = "SocialProfile",
+                                KeySchema = new()
+                                {
+                                    new() { AttributeName = "ProviderId", KeyType = "HASH" }
+                                },
+                                GlobalSecondaryIndexes = new()
+                                {
+                                    new()
+                                    {
+                                        IndexName = "ByTwitterId",
+                                        KeySchema = new()
+                                        {
+                                            new() { AttributeName = "TwitterId", KeyType = KeyType.HASH }
+                                        }
+                                    }
+                                },
+                                AttributeDefinitions = new List<AttributeDefinition>
+                                    {
+                                        new() { AttributeName = "ProviderId", AttributeType = ScalarAttributeType.S },
+                                        new() { AttributeName = "TwitterId", AttributeType = ScalarAttributeType.S },
+                                        new() { AttributeName = "InstagramId", AttributeType = ScalarAttributeType.S },
+                                        new() { AttributeName = "InstagramUsername", AttributeType = ScalarAttributeType.S }
+                                    },
                                 ProvisionedThroughput = new ProvisionedThroughput { ReadCapacityUnits = 1, WriteCapacityUnits = 1 }
                             };
 

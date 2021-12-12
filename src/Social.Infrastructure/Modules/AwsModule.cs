@@ -92,11 +92,11 @@ namespace Social.Infrastructure.Modules
                 .As<IQueueClient>();
 
             builder.Register(c => new SocialMediaRepository(c.Resolve<IDynamoDBContext>(), c.Resolve<ILogger>()))
-                .OnlyIf(_ => _context.Configuration["PlatformProviders:Queueing"].Equals("aws", StringComparison.InvariantCultureIgnoreCase))
+                .OnlyIf(_ => _context.Configuration["PlatformProviders:Storage"].Equals("aws", StringComparison.InvariantCultureIgnoreCase))
                 .SingleInstance()
-                .As<ISocialMediaRepository>();
-
-          
+                .As<ISocialMediaRepository>()
+                .As<ISearchRepository>()
+                .As<ISocialProfileRepository>();
         }
     }
 }
