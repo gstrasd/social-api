@@ -9,9 +9,7 @@ namespace Social.Infrastructure.Twitter
 {
     internal class TweetData
     {
-        [JsonPropertyName("id")]
         public string  Id { get; set; } = default!;
-        [JsonPropertyName("text")]
         public string Text { get; set; } = String.Empty;
     }
 }

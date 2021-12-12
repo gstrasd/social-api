@@ -16,9 +16,7 @@ namespace Social.Infrastructure.Twitter
     /// <typeparam name="T">The type of data requested</typeparam>
     internal class TwitterV2Response<T>
     {
-        [JsonPropertyName("data")]
         public T? Data { get; set; }
-        [JsonPropertyName("errors")]
         public List<Error>? Errors { get; set; }
     }
 
@@ -27,11 +25,8 @@ namespace Social.Infrastructure.Twitter
     /// </summary>
     internal class Error
     {
-        [JsonPropertyName("title")]
         public string Title { get; set; } = default!;
-        [JsonPropertyName("detail")]
         public string Detail { get; set; } = default!;
-        [JsonPropertyName("type")]
         public Uri Type { get; set; } = default!;
     }
 
@@ -40,13 +35,9 @@ namespace Social.Infrastructure.Twitter
     /// </summary>
     internal class ErrorResponse
     {
-        [JsonPropertyName("title")]
         public string Title { get; set; } = default!;
-        [JsonPropertyName("detail")]
         public string Detail { get; set; } = default!;
-        [JsonPropertyName("type")]
         public Uri Type { get; set; } = default!;
-        [JsonPropertyName("errors")]
         public List<ErrorMessage> Errors { get; set; } = default!;
     }
 
@@ -55,7 +46,6 @@ namespace Social.Infrastructure.Twitter
     /// </summary>
     internal sealed class ErrorMessage
     {
-        [JsonPropertyName("message")]
         public string? Message { get; set; }
     }
 }
