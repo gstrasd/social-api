@@ -6,11 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using Library.Configuration;
+using Library.Platform.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Social.Domain;
 using Social.Domain.Twitter;
+using Social.Infrastructure.Domain;
 using Social.Infrastructure.Iframely;
 using Social.Infrastructure.Twitter;
 
@@ -57,6 +59,10 @@ namespace Social.Infrastructure.Modules
                 })
                 .SingleInstance()
                 .As<ITwitterService>();
+
+            builder.Register(c => new SocialMediaRepository(c.Resolve<ITableStorageClient>(), c.Resolve<ILogger>()))
+                .SingleInstance()
+                .As<ISocialMediaRepository>();
         }
     }
 }
