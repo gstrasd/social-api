@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.Model;
 using Amazon.SQS;
 using Autofac;
 using Library.Amazon;
@@ -65,10 +67,6 @@ namespace Social.Installer.Modules
                 .SingleInstance()
                 .As<IInstallerStep>();
 
-            builder.Register(c => new SqsQueueManager(c.Resolve<IAmazonSQS>()))
-                .As<IQueueManager>()
-                .InstancePerDependency();
-
             // Create reconcile-tweets queue
             builder.Register(c =>
                 {
@@ -88,6 +86,39 @@ namespace Social.Installer.Modules
                 })
                 .SingleInstance()
                 .As<IInstallerStep>();
+
+            // Create SearchHistory table
+            builder.Register(c =>
+                {
+                    var client = c.Resolve<IAmazonDynamoDB>();
+                    var step = new InstallerStep("Create SearchHistory table", async () =>
+                    {
+                        var listTablesResponse = await client.ListTablesAsync();
+                        if (listTablesResponse.TableNames.Contains("SearchHistory"))
+                        {
+                            Console.WriteLine("SearchHistory table already exists.");
+                        }
+                        else
+                        {
+                            var request = new CreateTableRequest
+                            {
+                                TableName = "SearchHistory",
+                                KeySchema = new List<KeySchemaElement>
+                                {
+                                    new() { AttributeName = "Value", KeyType = "HASH" }
+                                },
+                                ProvisionedThroughput = new ProvisionedThroughput { ReadCapacityUnits = 1, WriteCapacityUnits = 1 }
+                            };
+
+                            await client.CreateTableAsync(request);
+                            Console.WriteLine("SearchHistory table created.");
+                        }
+                    });
+
+                    return step;
+                })
+                .SingleInstance()
+                .As<InstallerStep>();
 
             builder.Register(c => new SqsQueueManager(c.Resolve<IAmazonSQS>()))
                 .As<IQueueManager>()

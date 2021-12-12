@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.SQS;
@@ -13,6 +15,7 @@ using Library.Autofac;
 using Library.Amazon;
 using Library.Dataflow;
 using Library.Platform.Queuing;
+using Library.Platform.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -29,6 +32,7 @@ namespace Social.Infrastructure.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
+            // AWS configuration
             builder.Register(_ =>
                 {
                     var accessKey = _context.Configuration["Aws:AccessKey"];
@@ -40,9 +44,9 @@ namespace Social.Infrastructure.Modules
                 .Named<AWSOptions>("Development")
                 .SingleInstance();
 
+            // SQS client
             builder.Register(c =>
                 {
-                    // TODO: this code shouldn't have to reference config settings to get the environment, The should come from the host builder context
                     var options = c.ResolveNamed<AWSOptions>(_context.HostingEnvironment.EnvironmentName);
                     var client = options.CreateServiceClient<IAmazonSQS>();
 
@@ -52,6 +56,24 @@ namespace Social.Infrastructure.Modules
                 .InstancePerDependency()
                 .As<IAmazonSQS>();
 
+            // DynamoDB client
+            builder.Register(c =>
+                {
+                    var options = c.ResolveNamed<AWSOptions>(_context.HostingEnvironment.EnvironmentName);
+                    var client = options.CreateServiceClient<IAmazonDynamoDB>();
+                    return client;
+                })
+                .InstancePerDependency()
+                .As<IAmazonDynamoDB>();
+
+            // DynamoDB context
+            builder.Register(c => new DynamoDBContext(c.Resolve<IAmazonDynamoDB>()))
+                .InstancePerDependency()
+                .As<IDynamoDBContext>();
+
+            /******************************************** AWS-based Infrastructural components ***********************************************/
+
+            // Infrastructure queue client
             builder.Register((c, p) =>
                 {
                     var queue = p.TryGetValue("queue", out var value) ? value as string : null;
@@ -66,6 +88,12 @@ namespace Social.Infrastructure.Modules
                 .OnlyIf(_ => _context.Configuration["Providers:Queueing"].Equals("aws", StringComparison.InvariantCultureIgnoreCase))
                 .InstancePerDependency()
                 .As<IQueueClient>();
+
+            // Infrastructure table client
+            builder.Register(c => new DynamoTableStorageClient(c.Resolve<IDynamoDBContext>()))
+                .OnlyIf(_ => _context.Configuration["Providers:TableStorage"].Equals("aws", StringComparison.InvariantCultureIgnoreCase))
+                .InstancePerDependency()
+                .As<ITableStorageClient>();
         }
     }
 }
